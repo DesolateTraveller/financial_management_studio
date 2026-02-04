@@ -1,4 +1,8 @@
 # List your required libraries here 
-python-pptx
 streamlit
 pandas
+numpy
+matplotlib
+seaborn
+scipy
+plotly
