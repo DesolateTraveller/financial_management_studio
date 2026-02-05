@@ -46,9 +46,26 @@ st.markdown(
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+    .version-badge {
+        text-align: center;
+        display: inline-block;
+        background: linear-gradient(120deg, #0056b3, #0d4a96);
+        color: white;
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 1.15rem;
+        margin-top: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
     </style>
-    <div class="title-large">Financial Management Studio</div>
-    <div class="title-small">Play with Money | v0.1</div>
+    <div style="text-align: center;">
+        <div class="title-large">Financial Management Studio</div>
+        <div class="version-badge"> Play with Money | v0.1 </div>
+    </div>
     """,
     unsafe_allow_html=True
 )
+st.divider()
+
