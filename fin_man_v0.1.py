@@ -319,7 +319,55 @@ if st.session_state.page == 'home':
         if st.button("Open Calculator", key="btn_rd", use_container_width=True, type="primary"):
             st.session_state.page = 'rd'
             st.rerun()
-        
+
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">🏠</span> Home Affordability</div>
+                <ul class="card-list">
+                    <li>Max home price estimation</li>
+                    <li>Based on income & down payment</li>
+                    <li>Property tax, insurance, maintenance</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_home_af", use_container_width=True, type="primary"):
+                st.session_state.page = 'home_af'
+                st.rerun()
+
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">🇮🇳</span> PPF / Sukanya / NSC</div>
+                <ul class="card-list">
+                    <li>India-specific tax-saving instruments</li>
+                    <li>Auto current interest rates</li>
+                    <li>Maturity & interest projection</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_tax_saving", use_container_width=True, type="primary"):
+                st.session_state.page = 'tax_saving'
+                st.rerun()
+                
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">📉</span> Inflation Impact</div>
+                <ul class="card-list">
+                    <li>What will ₹X be worth in Y years?</li>
+                    <li>How much needed today for ₹Z future?</li>
+                    <li>Real vs nominal value</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_inflation", use_container_width=True, type="primary"):
+                st.session_state.page = 'inflation'
+                st.rerun()
+                        
     with cols[2]:
         
         st.markdown(
@@ -337,8 +385,41 @@ if st.session_state.page == 'home':
         if st.button("Open Calculator", key="btn_sip", use_container_width=True, type="primary"):
                 st.session_state.page = 'sip'
                 st.rerun()
-                        
-                    
+
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">🚗</span> Car Loan + Depreciation</div>
+                <ul class="card-list">
+                    <li>EMI and total cost</li>
+                    <li>Resale value over time</li>
+                    <li>20% annual depreciation</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_car", use_container_width=True, type="primary"):
+                st.session_state.page = 'car'
+                st.rerun()
+                                                        
+    with cols[3]:
+        
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">🏖️</span> Retirement Planner</div>
+                <ul class="card-list">
+                    <li>Corpus estimation</li>
+                    <li>Monthly savings required</li>
+                    <li>EPF, NPS, PPF options</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_retirement", use_container_width=True, type="primary"):
+                st.session_state.page = 'retirement'
+                st.rerun()
+                                    
 # ------------------------------------------------------------------
 # FIXED DEPOSIT PAGE
 # ------------------------------------------------------------------
@@ -1333,4 +1414,184 @@ elif st.session_state.page == 'cagr':
                 height=500
             )
             fig.update_yaxes(tickprefix="₹")
+            st.plotly_chart(fig, use_container_width=True)
+            
+elif st.session_state.page == 'retirement':
+    col_home, _ = st.columns([1, 9])
+    with col_home:
+        if st.button("← Home", key="home_retire", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    st.title("Retirement Planning Calculator")
+
+    input_col, result_col, display_col = st.columns([0.3, 0.3, 0.4])
+
+    with input_col:
+        with st.form("retire_form"):
+            current_age = st.number_input("Current Age", min_value=20, max_value=70, value=35)
+            retire_age = st.number_input("Retirement Age", min_value=40, max_value=80, value=60)
+            monthly_expense = st.number_input("Monthly Expense Today (₹)", min_value=5000, value=50000, step=5000)
+            inflation = st.slider("Inflation Rate (%)", min_value=3.0, max_value=10.0, value=6.0, step=0.5)
+            roi_post = st.slider("Post-Retirement ROI (%)", min_value=3.0, max_value=10.0, value=7.0, step=0.5)
+            roi_pre = st.slider("Pre-Retirement ROI (%)", min_value=6.0, max_value=15.0, value=10.0, step=0.5)
+            instrument = st.selectbox("Investment Instrument", ["None", "EPF (8.15%)", "PPF (7.1%)", "NPS (10%)"])
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            # Override ROI based on instrument
+            instrument_roi = {"EPF (8.15%)": 8.15, "PPF (7.1%)": 7.1, "NPS (10%)": 10.0}.get(instrument, None)
+            if instrument_roi:
+                roi_pre = instrument_roi
+
+            years_to_retire = retire_age - current_age
+            years_in_retirement = 85 - retire_age  # assume life till 85
+
+            # Future monthly expense at retirement
+            future_monthly = monthly_expense * ((1 + inflation / 100) ** years_to_retire)
+            # Annual expense
+            annual_expense = future_monthly * 12
+            # Retirement corpus (PV of annuity)
+            r = roi_post / 100
+            if r > 0:
+                corpus = annual_expense * (1 - (1 + r) ** (-years_in_retirement)) / r
+            else:
+                corpus = annual_expense * years_in_retirement
+
+            # Monthly savings needed
+            n = years_to_retire * 12
+            r_monthly = (roi_pre / 100) / 12
+            if r_monthly > 0:
+                monthly_savings = corpus * r_monthly / ((1 + r_monthly) ** n - 1)
+            else:
+                monthly_savings = corpus / n
+
+            st.markdown("### 📊 Results")
+            st.metric("Retirement Corpus Needed", f"₹{corpus:,.0f}")
+            st.metric("Monthly Savings Required", f"₹{monthly_savings:,.0f}")
+            st.caption(f"Based on {instrument if instrument != 'None' else 'Custom'} ROI")
+
+    with display_col:
+        if submitted:
+            # Show expense growth and corpus buildup
+            years = np.arange(0, years_to_retire + 1)
+            expenses = [monthly_expense * ((1 + inflation/100) ** y) for y in years]
+            
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=years + current_age, y=expenses, mode='lines', name='Monthly Expense (Future Value)'))
+            fig.update_layout(
+                title="Future Monthly Expense at Retirement",
+                xaxis_title="Age",
+                yaxis_title="Expense (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig.update_yaxes(tickprefix="₹")
+            st.plotly_chart(fig, use_container_width=True)
+            
+elif st.session_state.page == 'emergency':
+    col_home, _ = st.columns([1, 9])
+    with col_home:
+        if st.button("← Home", key="home_emergency", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    st.title("Emergency Fund Calculator")
+
+    input_col, result_col, display_col = st.columns([0.3, 0.3, 0.4])
+
+    with input_col:
+        with st.form("emergency_form"):
+            monthly_expense = st.number_input("Monthly Essential Expenses (₹)", min_value=5000, value=40000, step=5000)
+            months_cover = st.slider("Coverage (Months)", min_value=3, max_value=12, value=6, step=1)
+            current_fund = st.number_input("Current Emergency Fund (₹)", min_value=0, value=100000, step=10000)
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            recommended = monthly_expense * months_cover
+            gap = max(0, recommended - current_fund)
+
+            st.markdown("### 📊 Results")
+            st.metric("Recommended Fund", f"₹{recommended:,.0f}")
+            st.metric("Current Fund", f"₹{current_fund:,.0f}")
+            st.metric("Gap to Fill", f"₹{gap:,.0f}")
+
+            if gap <= 0:
+                st.success("✅ You're fully covered!")
+            else:
+                months_to_save = gap / (monthly_expense * 0.2)  # assuming 20% savings
+                st.warning(f"💡 Save ₹{gap/months_to_save:,.0f}/month for {months_to_save:.1f} months")
+
+    with display_col:
+        if submitted:
+            fig = go.Figure(go.Indicator(
+                mode="gauge+number",
+                value=current_fund / recommended * 100 if recommended > 0 else 0,
+                title={'text': "Emergency Fund Status"},
+                gauge={
+                    'axis': {'range': [0, 100]},
+                    'bar': {'color': "#4ade80" if current_fund >= recommended else "#f87171"},
+                    'steps': [
+                        {'range': [0, 50], 'color': "#fee2e2"},
+                        {'range': [50, 100], 'color': "#dcfce7"}
+                    ],
+                    'threshold': {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 100}
+                }
+            ))
+            fig.update_layout(height=300)
+            st.plotly_chart(fig, use_container_width=True)
+            
+elif st.session_state.page == 'home_af':
+    col_home, _ = st.columns([1, 9])
+    with col_home:
+        if st.button("← Home", key="home_home", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    st.title("Home Affordability Calculator")
+
+    input_col, result_col, display_col = st.columns([0.3, 0.3, 0.4])
+
+    with input_col:
+        with st.form("home_form"):
+            annual_income = st.number_input("Annual Income (₹)", min_value=300000, value=1200000, step=100000)
+            down_payment = st.number_input("Down Payment (₹)", min_value=100000, value=1000000, step=100000)
+            interest_rate = st.slider("Home Loan Interest (%)", min_value=6.0, max_value=12.0, value=8.5, step=0.1)
+            loan_tenure = st.slider("Loan Tenure (Years)", min_value=5, max_value=30, value=20, step=1)
+            property_tax = st.number_input("Annual Property Tax (₹)", min_value=0, value=20000, step=5000)
+            insurance = st.number_input("Annual Insurance (₹)", min_value=0, value=10000, step=1000)
+            maintenance = st.number_input("Annual Maintenance (₹)", min_value=0, value=30000, step=5000)
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            # Max EMI (typically 40-50% of monthly income)
+            monthly_income = annual_income / 12
+            max_emi = monthly_income * 0.5
+
+            # Loan amount based on EMI
+            r = interest_rate / 100 / 12
+            n = loan_tenure * 12
+            if r > 0:
+                loan_amount = max_emi * ((1 + r)**n - 1) / (r * (1 + r)**n)
+            else:
+                loan_amount = max_emi * n
+
+            home_price = loan_amount + down_payment
+            total_annual_cost = property_tax + insurance + maintenance + (max_emi * 12)
+
+            st.markdown("### 📊 Results")
+            st.metric("Max Home Price", f"₹{home_price:,.0f}")
+            st.metric("Loan Eligible", f"₹{loan_amount:,.0f}")
+            st.metric("Monthly EMI", f"₹{max_emi:,.0f}")
+            st.metric("Total Annual Cost", f"₹{total_annual_cost:,.0f}")
+
+    with display_col:
+        if submitted:
+            labels = ['Down Payment', 'Loan Amount']
+            values = [down_payment, loan_amount]
+            fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.4)])
+            fig.update_layout(title="Home Purchase Breakdown", height=400)
             st.plotly_chart(fig, use_container_width=True)
