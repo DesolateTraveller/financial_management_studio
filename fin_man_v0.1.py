@@ -36,8 +36,8 @@ st.markdown(
     /* Card styling (matches your screenshot) */
     .card {
         background-color: white;
-        border-radius: 12px;
-        padding: 24px;
+        border-radius: 10px;
+        padding: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
         border: 1px solid #e1e5eb;
@@ -229,7 +229,7 @@ if st.session_state.page == 'home':
     """, unsafe_allow_html=True)
 
     # Use 3 columns (adjust for responsiveness)
-    cols = st.columns(3)
+    cols = st.columns(4)
 
     # Fixed Deposit Card
     with cols[0]:
@@ -251,7 +251,57 @@ if st.session_state.page == 'home':
             st.session_state.page = 'fd'
             st.rerun()
 
-    # Recurring Deposit Card
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">🏦</span> Loan EMI Calculator</div>
+                <ul class="card-list">
+                    <li>EMI calculation</li>
+                    <li>Interest vs principal breakdown</li>
+                    <li>Flexible tenure & rate</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        if st.button("Open Calculator", key="btn_loan", use_container_width=True, type="primary"):
+            st.session_state.page = 'loan'
+            st.rerun()
+            
+        st.markdown(
+            """
+            <div class="card">
+                <div class=" "card-title"><span class="card-icon">🧾</span> Income Tax (India)</div>
+                <ul class="card-list">
+                    <li>New vs Old tax regime</li>
+                    <li>80C, HRA, deductions</li>
+                    <li>Take-home salary</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        if st.button("Open Calculator", key="btn_tax", use_container_width=True, type="primary"):
+            st.session_state.page = 'tax'
+            st.rerun()
+        
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">📊</span> CAGR Compound Annual Growth Rate) Calculator</div>
+                <ul class="card-list">
+                    <li>Annualized return</li>
+                    <li>Compare multiple assets</li>
+                    <li>Visual growth chart</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        if st.button("Open Calculator", key="btn_cagr", use_container_width=True, type="primary"):
+            st.session_state.page = 'cagr'
+            st.rerun()
+            
     with cols[1]:
         st.markdown(
             """
@@ -269,26 +319,26 @@ if st.session_state.page == 'home':
         if st.button("Open Calculator", key="btn_rd", use_container_width=True, type="primary"):
             st.session_state.page = 'rd'
             st.rerun()
-
-    # Loan EMI Card
+        
     with cols[2]:
+        
         st.markdown(
             """
             <div class="card">
-                <div class="card-title"><span class="card-icon">🏦</span> Loan EMI Calculator</div>
+                <div class="card-title"><span class="card-icon">📈</span> SIP Calculator</div>
                 <ul class="card-list">
-                    <li>EMI calculation</li>
-                    <li>Interest vs principal breakdown</li>
-                    <li>Flexible tenure & rate</li>
+                    <li>Monthly mutual fund investments</li>
+                    <li>Lumpsum vs SIP comparison</li>
+                    <li>Inflation-adjusted returns</li>
                 </ul>
             </div>
             """,
-            unsafe_allow_html=True
-        )
-        if st.button("Open Calculator", key="btn_loan", use_container_width=True, type="primary"):
-            st.session_state.page = 'loan'
-            st.rerun()
-
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_sip", use_container_width=True, type="primary"):
+                st.session_state.page = 'sip'
+                st.rerun()
+                        
+                    
 # ------------------------------------------------------------------
 # FIXED DEPOSIT PAGE
 # ------------------------------------------------------------------
@@ -483,7 +533,7 @@ elif st.session_state.page == 'rd':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("← Home", key="home_rd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -726,7 +776,7 @@ elif st.session_state.page == 'loan':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("← Home", key="home_loan", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -920,3 +970,367 @@ elif st.session_state.page == 'loan':
                 )
                 with st.container(border=True):
                     st.plotly_chart(fig2, use_container_width=True)
+
+# ------------------------------------------------------------------
+# SIP PAGE
+# ------------------------------------------------------------------                    
+                    
+elif st.session_state.page == 'sip':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("← Home", key="home_sip", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    #st.title("Fixed Deposit Calculator")
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            SIP Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
+
+    with input_col:
+        with st.form("sip_form"):
+            monthly_invest = st.number_input("Monthly Investment (₹)", min_value=500, value=5000, step=500)
+            rate = st.slider("Expected Annual Return (%)", min_value=4.0, max_value=20.0, value=12.0, step=0.5)
+            years = st.slider("Investment Tenure (Years)", min_value=1, max_value=30, value=10, step=1)
+            inflation = st.checkbox("Adjust for Inflation (6%)", value=False)
+            compare_lumpsum = st.checkbox("Compare with Lumpsum", value=True)
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            P = monthly_invest
+            r = rate / 100
+            n = years * 12
+            monthly_r = r / 12
+
+            # SIP Future Value
+            if monthly_r > 0:
+                fv_sip = P * (((1 + monthly_r)**n - 1) / monthly_r) * (1 + monthly_r)
+            else:
+                fv_sip = P * n
+
+            total_invested = P * n
+
+            # Lumpsum (same total invested as lumpsum at start)
+            if compare_lumpsum:
+                fv_lumpsum = total_invested * (1 + r)**years
+
+            # Adjust for inflation
+            inflation_rate = 0.06 if inflation else 0
+            real_fv_sip = fv_sip / ((1 + inflation_rate) ** years)
+            if compare_lumpsum:
+                real_fv_lumpsum = fv_lumpsum / ((1 + inflation_rate) ** years)
+
+            # Display
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Total Invested", f"₹{total_invested:,.0f}")
+                
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)
+                c1.metric("SIP Maturity (Nominal)", f"₹{fv_sip:,.0f}")
+                if inflation:
+                    c2.metric("SIP Maturity (Real)", f"₹{real_fv_sip:,.0f}")
+
+            if compare_lumpsum:
+                with st.container(border=True):
+                    c1, c2, c3 = st.columns(3)
+                    c1.metric("Lumpsum Maturity (Nominal)", f"₹{fv_lumpsum:,.0f}")
+                    if inflation:
+                        c2.metric("Lumpsum Maturity (Real)", f"₹{real_fv_lumpsum:,.0f}")
+
+            with st.expander("🧮 Formula", expanded=True):
+                st.markdown(f"""
+                **SIP Future Value**:  
+                $$
+                FV = P \\cdot \\frac{{(1 + r)^n - 1}}{{r}} \\cdot (1 + r)
+                $$
+                Where $ P = ₹{P} $, $ r = {monthly_r:.4f} $, $ n = {n} $
+                """)
+
+    with display_col:
+        if submitted:
+            months = np.arange(1, n + 1)
+            sip_vals = []
+            lumpsum_vals = []
+            for m in months:
+                # SIP up to month m
+                if monthly_r > 0:
+                    val = P * (((1 + monthly_r)**m - 1) / monthly_r) * (1 + monthly_r)
+                else:
+                    val = P * m
+                sip_vals.append(val)
+                
+                # Lumpsum grows from day 1
+                if compare_lumpsum:
+                    lumpsum_vals.append(total_invested * (1 + r) ** (m / 12))
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=months/12, y=sip_vals, mode='lines', name='SIP', line=dict(color='#2563eb')))
+            if compare_lumpsum:
+                fig.add_trace(go.Scatter(x=months/12, y=lumpsum_vals, mode='lines', name='Lumpsum', line=dict(color='#dc2626')))
+            fig.update_layout(
+                title="SIP vs Lumpsum Growth",
+                xaxis_title="Years",
+                yaxis_title="Amount (₹)",
+                hovermode="x unified",
+                template="plotly_white",
+                height=500
+            )
+            fig.update_yaxes(tickprefix="₹")
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+                
+# ------------------------------------------------------------------
+# INCOME TAX PAGE
+# ------------------------------------------------------------------                    
+                    
+elif st.session_state.page == 'tax':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    #st.title("Fixed Deposit Calculator")
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            INCOME TAX Calculator (India - FY 2025-26)
+        </div>
+        """, unsafe_allow_html=True)
+        
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
+
+    with input_col:
+        with st.form("tax_form"):
+            income = st.number_input("Annual Income (₹)", min_value=0, value=1000000, step=50000)
+            
+            st.divider()
+            # Old Regime Deductions
+            st.markdown("##### 📌 Old Regime Deductions")
+            sec_80c = st.number_input("80C (PPF, ELSS, etc.)", min_value=0, max_value=150000, value=150000, step=10000)
+            hra = st.number_input("HRA Exemption", min_value=0, value=0, step=10000)
+            sec_80d = st.number_input("80D (Health Insurance)", min_value=0, max_value=50000, value=25000, step=5000)
+            
+            submitted = st.form_submit_button("Calculate Tax")
+
+    with result_col:
+        if submitted:
+            # === NEW REGIME (default from FY 2023-24) ===
+            # Slabs: 0-3L: 0%, 3-6L: 5%, 6-9L: 10%, 9-12L: 15%, 12-15L: 20%, >15L: 30%
+            def calc_new_regime(income):
+                tax = 0
+                if income <= 300000:
+                    return 0
+                elif income <= 600000:
+                    tax = (income - 300000) * 0.05
+                elif income <= 900000:
+                    tax = 15000 + (income - 600000) * 0.10
+                elif income <= 1200000:
+                    tax = 45000 + (income - 900000) * 0.15
+                elif income <= 1500000:
+                    tax = 90000 + (income - 1200000) * 0.20
+                else:
+                    tax = 150000 + (income - 1500000) * 0.30
+                return tax + (0.04 * tax)  # +4% cess
+
+            # === OLD REGIME ===
+            def calc_old_regime(income, hra, sec_80c, sec_80d):
+                taxable = income - hra - min(sec_80c, 150000) - min(sec_80d, 50000)
+                if taxable < 0:
+                    taxable = 0
+                tax = 0
+                if taxable <= 250000:
+                    tax = 0
+                elif taxable <= 500000:
+                    tax = (taxable - 250000) * 0.05
+                elif taxable <= 1000000:
+                    tax = 12500 + (taxable - 500000) * 0.20
+                else:
+                    tax = 112500 + (taxable - 1000000) * 0.30
+                return tax + (0.04 * tax)
+
+            tax_new = calc_new_regime(income)
+            tax_old = calc_old_regime(income, hra, sec_80c, sec_80d)
+
+            take_home_new = income - tax_new
+            take_home_old = income - tax_old
+
+            with st.container(border=True):
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.caption("🔹 New Regime")
+                    st.metric("Tax Payable", f"₹{tax_new:,.0f}")
+                    st.metric("Take-Home", f"₹{take_home_new:,.0f}")
+                with col2:
+                    st.caption("🔸 Old Regime")
+                    st.metric("Tax Payable", f"₹{tax_old:,.0f}")
+                    st.metric("Take-Home", f"₹{take_home_old:,.0f}")
+
+                better = "New Regime" if tax_new < tax_old else "Old Regime"
+                savings = abs(tax_new - tax_old)
+                st.success(f"💡 **{better} saves you ₹{savings:,.0f}**")
+
+    with display_col:
+        if submitted:
+            labels = ['New Regime', 'Old Regime']
+            taxes = [tax_new, tax_old]
+            fig = go.Figure(data=[go.Bar(
+                x=labels,
+                y=taxes,
+                marker_color=['#4ade80', '#f87171']
+            )])
+            fig.update_layout(
+                title="Tax Payable Comparison",
+                yaxis_title="Tax (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig.update_yaxes(tickprefix="₹")
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+                
+# ------------------------------------------------------------------
+# CAGR PAGE
+# ------------------------------------------------------------------                    
+                    
+elif st.session_state.page == 'cagr':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("← Home", key="home_cagr", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    #st.title("Fixed Deposit Calculator")
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            CAGR Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+    input_col, result_col, display_col = st.columns([0.3, 0.3, 0.4])
+
+    with input_col:
+        with st.form("cagr_form"):
+            st.markdown("#### Asset 1")
+            initial1 = st.number_input("Initial Value (₹)", min_value=1, value=100000, step=10000, key="i1")
+            final1 = st.number_input("Final Value (₹)", min_value=1, value=200000, step=10000, key="f1")
+            years1 = st.number_input("Years", min_value=0.1, value=5.0, step=0.5, key="y1")
+            
+            st.markdown("#### Asset 2 (Optional)")
+            initial2 = st.number_input("Initial Value (₹)", min_value=0, value=0, step=10000, key="i2")
+            final2 = st.number_input("Final Value (₹)", min_value=0, value=0, step=10000, key="f2")
+            years2 = st.number_input("Years", min_value=0.1, value=5.0, step=0.5, key="y2")
+            
+            submitted = st.form_submit_button("Calculate CAGR")
+
+    with result_col:
+        if submitted:
+            def cagr(initial, final, years):
+                if initial <= 0 or final <= 0 or years <= 0:
+                    return None
+                return (final / initial) ** (1 / years) - 1
+
+            cagr1 = cagr(initial1, final1, years1)
+            cagr2 = cagr(initial2, final2, years2) if initial2 > 0 and final2 > 0 else None
+
+            st.markdown("### 📊 Results")
+            if cagr1 is not None:
+                st.metric("Asset 1 CAGR", f"{cagr1:.2%}")
+            if cagr2 is not None:
+                st.metric("Asset 2 CAGR", f"{cagr2:.2%}")
+                diff = cagr1 - cagr2
+                st.metric("Difference", f"{diff:.2%}", delta="Higher" if diff > 0 else "Lower")
+
+            with st.expander("🧮 Formula"):
+                st.markdown(r"""
+                $$
+                \text{CAGR} = \left( \frac{\text{Final Value}}{\text{Initial Value}} \right)^{\frac{1}{\text{Years}}} - 1
+                $$
+                """)
+
+    with display_col:
+        if submitted and cagr1 is not None:
+            years_range = np.linspace(0, years1, 50)
+            values1 = [initial1 * (1 + cagr1) ** y for y in years_range]
+            
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=years_range, y=values1, mode='lines', name='Asset 1', line=dict(color='#2563eb')))
+            
+            if cagr2 is not None:
+                years_range2 = np.linspace(0, years2, 50)
+                values2 = [initial2 * (1 + cagr2) ** y for y in years_range2]
+                fig.add_trace(go.Scatter(x=years_range2, y=values2, mode='lines', name='Asset 2', line=dict(color='#dc2626')))
+            
+            fig.update_layout(
+                title="Growth Over Time",
+                xaxis_title="Years",
+                yaxis_title="Value (₹)",
+                hovermode="x unified",
+                template="plotly_white",
+                height=500
+            )
+            fig.update_yaxes(tickprefix="₹")
+            st.plotly_chart(fig, use_container_width=True)
