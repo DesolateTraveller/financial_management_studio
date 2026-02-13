@@ -1461,44 +1461,85 @@ elif st.session_state.page == 'retirement':
             inflation = st.slider("Inflation Rate (%)", min_value=3.0, max_value=10.0, value=6.0, step=0.5)
             roi_post = st.slider("Post-Retirement ROI (%)", min_value=3.0, max_value=10.0, value=7.0, step=0.5)
             roi_pre = st.slider("Pre-Retirement ROI (%)", min_value=6.0, max_value=15.0, value=10.0, step=0.5)
-            instrument = st.selectbox("Investment Instrument", ["None", "EPF (8.15%)", "PPF (7.1%)", "NPS (10%)"])
+            instrument = st.selectbox("Investment Instrument", ["Custom", "EPF (8.15%)", "PPF (7.1%)", "NPS (10%)"])
             submitted = st.form_submit_button("Calculate")
 
     with result_col:
         if submitted:
-            # Override ROI based on instrument
-            instrument_roi = {"EPF (8.15%)": 8.15, "PPF (7.1%)": 7.1, "NPS (10%)": 10.0}.get(instrument, None)
-            if instrument_roi:
-                roi_pre = instrument_roi
+            # Override pre-retirement ROI based on instrument
+            instrument_map = {"EPF (8.15%)": 8.15, "PPF (7.1%)": 7.1, "NPS (10%)": 10.0}
+            if instrument != "Custom":
+                roi_pre = instrument_map[instrument]
 
             years_to_retire = retire_age - current_age
-            years_in_retirement = 85 - retire_age  # assume life till 85
+            years_in_retirement = 25  # assume 25 years post-retirement (till age 85)
 
-            # Future monthly expense at retirement
+            # Step 1: Future monthly expense at retirement
             future_monthly = monthly_expense * ((1 + inflation / 100) ** years_to_retire)
-            # Annual expense
             annual_expense = future_monthly * 12
-            # Retirement corpus (PV of annuity)
-            r = roi_post / 100
-            if r > 0:
-                corpus = annual_expense * (1 - (1 + r) ** (-years_in_retirement)) / r
+
+            # Step 2: Retirement corpus needed (PV of annuity)
+            r_post = roi_post / 100
+            if r_post > 0:
+                corpus = annual_expense * (1 - (1 + r_post) ** (-years_in_retirement)) / r_post
             else:
                 corpus = annual_expense * years_in_retirement
 
-            # Monthly savings needed
-            n = years_to_retire * 12
+            # Step 3: Monthly savings required
+            n_months = years_to_retire * 12
             r_monthly = (roi_pre / 100) / 12
             if r_monthly > 0:
-                monthly_savings = corpus * r_monthly / ((1 + r_monthly) ** n - 1)
+                monthly_savings = corpus * r_monthly / ((1 + r_monthly) ** n_months - 1)
             else:
-                monthly_savings = corpus / n
+                monthly_savings = corpus / n_months
+
+            total_invested = monthly_savings * n_months
+            interest_earned = corpus - total_invested
 
             with st.container(border=True):
-                c1, c2 = st.columns(2)
+                c1, c2, c3 = st.columns(3)
                 c1.metric("Retirement Corpus Needed", f"₹{corpus:,.0f}")
                 c2.metric("Monthly Savings Required", f"₹{monthly_savings:,.0f}")
+                c3.metric("Total Amount Invested", f"₹{total_invested:,.0f}")
                 st.caption(f"Based on {instrument if instrument != 'None' else 'Custom'} ROI")
 
+            with st.expander("🧮 Detailed Calculation", expanded=True):
+                st.markdown(f"""
+                **1. Future Monthly Expense at Age {retire_age}**  
+                ₹{monthly_expense:,} × (1 + {inflation}%)^{years_to_retire} = **₹{future_monthly:,.0f}**
+
+                **2. Annual Expense in Retirement**  
+                ₹{future_monthly:,.0f} × 12 = **₹{annual_expense:,.0f}**
+
+                **3. Retirement Corpus (PV of 25-year annuity @ {roi_post}% p.a.)**  
+                $$
+                \\text{{Corpus}} = A \\cdot \\frac{{1 - (1 + r)^{{-n}}}}{{r}} = {annual_expense:,.0f} \\cdot \\frac{{1 - (1 + {r_post:.3f})^{{-{years_in_retirement}}}}}{{{r_post:.3f}}} = ₹{corpus:,.0f}
+                $$
+
+                **4. Monthly Savings Required (@ {roi_pre}% p.a. for {years_to_retire} years)**  
+                $$
+                P = \\frac{{F \\cdot r}}{{(1 + r)^n - 1}} = \\frac{{{corpus:,.0f} \\cdot {r_monthly:.6f}}}{{(1 + {r_monthly:.6f})^{{{n_months}}} - 1}} = ₹{monthly_savings:,.0f}
+                $$
+                """)
+
+            # --- Year-wise Expense Growth Table ---
+            #st.markdown("### 📈 Expense Growth Over Time")
+            expense_data = []
+            for yr in range(0, years_to_retire + 1, max(1, years_to_retire // 10)):
+                age = current_age + yr
+                exp = monthly_expense * ((1 + inflation / 100) ** yr)
+                expense_data.append({"Age": age, "Monthly Expense (₹)": round(exp, 0)})
+            
+            exp_df = pd.DataFrame(expense_data)
+            with st.container(border=True):
+                st.dataframe(exp_df, use_container_width=True, hide_index=True)
+
+                # --- Insight ---
+                if monthly_savings > (monthly_expense * 0.3):
+                    st.warning("💡 Monthly savings > 30% of current expenses. Consider increasing ROI or extending retirement age.")
+                else:
+                    st.success("✅ Savings target is achievable with disciplined investing.")
+                
     with display_col:
         if submitted:
             # Show expense growth and corpus buildup
@@ -1630,9 +1671,9 @@ elif st.session_state.page == 'home_af':
 
     with result_col:
         if submitted:
-            # Max EMI (typically 60% of monthly income)
             monthly_income = annual_income / 12
-            max_emi = monthly_income * 0.6
+            # Max EMI: 50% of monthly income (standard rule)
+            max_emi = monthly_income * 0.5
 
             # Loan amount based on EMI
             r = interest_rate / 100 / 12
@@ -1643,7 +1684,8 @@ elif st.session_state.page == 'home_af':
                 loan_amount = max_emi * n
 
             home_price = loan_amount + down_payment
-            total_annual_cost = property_tax + insurance + maintenance + (max_emi * 12)
+            total_annual_housing_cost = property_tax + insurance + maintenance + (max_emi * 12)
+            housing_cost_ratio = total_annual_housing_cost / annual_income * 100
 
             with st.container(border=True):
                 c1, c2 = st.columns(2)
@@ -1653,17 +1695,55 @@ elif st.session_state.page == 'home_af':
             with st.container(border=True):
                 c1, c2 = st.columns(2)                
                 c1.metric("Monthly EMI", f"₹{max_emi:,.0f}")
-                c2.metric("Total Annual Cost", f"₹{total_annual_cost:,.0f}")
+                c2.metric("Total Annual Housing Cost", f"₹{total_annual_housing_cost:,.0f}")
+
+
+            with st.expander("🧮 Detailed Calculation", expanded=True):
+                st.markdown(f"""
+                **1. Maximum Affordable EMI**  
+                50% of Monthly Income = 0.5 × ₹{monthly_income:,.0f} = **₹{max_emi:,.0f}**
+
+                **2. Loan Eligibility (@ {interest_rate}% for {loan_tenure} years)**  
+                $$
+                \\text{{Loan}} = EMI \\cdot \\frac{{(1 + r)^n - 1}}{{r(1 + r)^n}} = {max_emi:,.0f} \\cdot \\frac{{(1 + {r:.6f})^{{{n}}} - 1}}{{{r:.6f}(1 + {r:.6f})^{{{n}}}}} = ₹{loan_amount:,.0f}
+                $$
+
+                **3. Maximum Home Price**  
+                Loan + Down Payment = ₹{loan_amount:,.0f} + ₹{down_payment:,.0f} = **₹{home_price:,.0f}**
+
+                **4. Total Annual Housing Cost**  
+                EMI×12 + Tax + Insurance + Maintenance  
+                = ₹{max_emi*12:,.0f} + ₹{property_tax:,} + ₹{insurance:,} + ₹{maintenance:,} = **₹{total_annual_housing_cost:,.0f}**
+                """)
+
+                # --- Affordability Insight ---
+                if housing_cost_ratio > 40:
+                    st.warning(f"⚠️ Housing costs are {housing_cost_ratio:.1f}% of income (>40%). Consider a lower budget.")
+                else:
+                    st.success(f"✅ Housing costs are {housing_cost_ratio:.1f}% of income — within healthy range.")
 
     with display_col:
         if submitted:
             labels = ['Down Payment', 'Loan Amount']
             values = [down_payment, loan_amount]
-            fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.4)])
-            fig.update_layout(title="Home Purchase Breakdown", height=400)
-            
+            fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.4, marker_colors=['#4ade80', '#38bdf8'])])
+            fig.update_layout(title="Home Purchase Breakdown", height=300)
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
+
+            # Monthly cost breakdown
+            emi_monthly = max_emi
+            other_monthly = (property_tax + insurance + maintenance) / 12
+            fig2 = go.Figure(go.Bar(
+                x=['EMI', 'Property Tax', 'Insurance', 'Maintenance'],
+                y=[emi_monthly, property_tax/12, insurance/12, maintenance/12],
+                marker_color=['#38bdf8', '#f87171', '#fb923c', '#a78bfa']
+            ))
+            fig2.update_layout(title="Monthly Housing Cost Breakdown", yaxis_title="Amount (₹)", height=300)
+            fig2.update_yaxes(tickprefix="₹")
+            
+            with st.container(border=True):
+                st.plotly_chart(fig2, use_container_width=True)
             
 # ------------------------------------------------------------------
 # CAR LOAN & DEPRECIATION PAGE
@@ -1728,9 +1808,9 @@ elif st.session_state.page == 'car':
             total_payment = emi * n
             total_interest = total_payment - loan_amount
 
-            # Depreciation over 5 years
-            years = np.arange(0, 6)
-            resale_values = [car_price * ((1 - depreciation/100) ** y) for y in years]
+            # Resale value after loan tenure
+            resale_value = car_price * ((1 - depreciation / 100) ** loan_tenure)
+            net_loss = car_price - resale_value
 
             with st.container(border=True):
                 c1, c2, c3 = st.columns(3)
@@ -1740,25 +1820,61 @@ elif st.session_state.page == 'car':
 
             with st.container(border=True):
                 c1, c2, c3 = st.columns(3)                
-                c1.metric("Resale Value (Year 5)", f"₹{resale_values[5]:,.0f}")
+                c1.metric("Resale Value (Year {loan_tenure})", f"₹{resale_value:,.0f}")
+
+            with st.expander("🧮 Detailed Calculation", expanded=True):
+                st.markdown(f"""
+                **1. Loan Amount**  
+                Car Price – Down Payment = ₹{car_price:,.0f} – ₹{down_payment:,.0f} = **₹{loan_amount:,.0f}**
+
+                **2. EMI Calculation (@ {interest_rate}% for {loan_tenure} years)**  
+                $$
+                EMI = P \\cdot \\frac{{r(1+r)^n}}{{(1+r)^n - 1}} = {loan_amount:,.0f} \\cdot \\frac{{{r:.6f}(1+{r:.6f})^{{{n}}}}}{{(1+{r:.6f})^{{{n}}} - 1}} = ₹{emi:,.0f}
+                $$
+
+                **3. Total Interest**  
+                (EMI × {n}) – Principal = ₹{total_payment:,.0f} – ₹{loan_amount:,.0f} = **₹{total_interest:,.0f}**
+
+                **4. Resale Value After {loan_tenure} Years (@ {depreciation}% p.a.)**  
+                ₹{car_price:,.0f} × (1 – {depreciation/100:.2f})^{loan_tenure} = **₹{resale_value:,.0f}**
+                """)
+
+                # --- Insight ---
+                total_cost_of_ownership = total_payment + down_payment - resale_value
+                st.metric("Net Cost of Ownership", f"₹{total_cost_of_ownership:,.0f}")
+                if total_cost_of_ownership > car_price:
+                    st.warning("💡 You'll pay more than the car's original price due to interest & depreciation.")
+                else:
+                    st.info("✅ Net cost is less than original price — good deal!")
+
 
     with display_col:
         if submitted:
-            years = np.arange(0, 6)
-            resale_values = [car_price * ((1 - depreciation/100) ** y) for y in years]
+            years = np.arange(0, loan_tenure + 1)
+            values = [car_price * ((1 - depreciation/100) ** y) for y in years]
             
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=years, y=resale_values, mode='lines+markers', name='Resale Value'))
-            fig.update_layout(
+            fig1 = go.Figure()
+            fig1.add_trace(go.Scatter(x=years, y=values, mode='lines+markers', name='Resale Value', line=dict(color='#dc2626')))
+            fig1.update_layout(
                 title="Car Depreciation Over Time",
                 xaxis_title="Years",
                 yaxis_title="Value (₹)",
                 template="plotly_white",
-                height=400
+                height=300
             )
-            fig.update_yaxes(tickprefix="₹")
+            fig1.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig1, use_container_width=True)
+
+            # Cost breakdown pie
+            fig2 = go.Figure(data=[go.Pie(
+                labels=['Down Payment', 'Interest', 'Depreciation Loss'],
+                values=[down_payment, total_interest, net_loss],
+                marker_colors=['#4ade80', '#f87171', '#a78bfa']
+            )])
+            fig2.update_layout(title="Cost Components", height=500)
+            with st.container(border=True):
+                st.plotly_chart(fig2, use_container_width=True)
 
 # ------------------------------------------------------------------
 # INFLATION IMPACT PAGE
