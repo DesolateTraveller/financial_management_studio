@@ -237,7 +237,7 @@ if st.session_state.page == 'home':
         st.markdown(
             """
             <div class="card">
-                <div class="card-title"><span class="card-icon">💰</span> Fixed Deposit Calculator</div>
+                <div class="card-title"><span class="card-icon">💰</span> Fixed Deposit </div>
                 <ul class="card-list">
                     <li>Lump-sum investment</li>
                     <li>Compounding options</li>
@@ -254,7 +254,7 @@ if st.session_state.page == 'home':
         st.markdown(
             """
             <div class="card">
-                <div class="card-title"><span class="card-icon">🏦</span> Loan EMI Calculator</div>
+                <div class="card-title"><span class="card-icon">🏦</span> Loan EMI </div>
                 <ul class="card-list">
                     <li>EMI calculation</li>
                     <li>Interest vs principal breakdown</li>
@@ -306,7 +306,7 @@ if st.session_state.page == 'home':
         st.markdown(
             """
             <div class="card">
-                <div class="card-title"><span class="card-icon">🔄</span> Recurring Deposit Calculator</div>
+                <div class="card-title"><span class="card-icon">🔄</span> Recurring Deposit</div>
                 <ul class="card-list">
                     <li>Monthly deposits</li>
                     <li>Quarterly/Monthly compounding</li>
@@ -373,7 +373,7 @@ if st.session_state.page == 'home':
         st.markdown(
             """
             <div class="card">
-                <div class="card-title"><span class="card-icon">📈</span> SIP Calculator</div>
+                <div class="card-title"><span class="card-icon">📈</span> SIP (Systematic Investment Plan)</div>
                 <ul class="card-list">
                     <li>Monthly mutual fund investments</li>
                     <li>Lumpsum vs SIP comparison</li>
@@ -1067,7 +1067,6 @@ elif st.session_state.page == 'sip':
             go_home()
             st.rerun()
 
-    #st.title("Fixed Deposit Calculator")
     with title:
         st.markdown("""
         <style>
@@ -1088,7 +1087,6 @@ elif st.session_state.page == 'sip':
             SIP Calculator
         </div>
         """, unsafe_allow_html=True)
-
 
     input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
 
@@ -1283,11 +1281,11 @@ elif st.session_state.page == 'tax':
             with st.container(border=True):
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.caption("🔹 New Regime")
+                    st.caption("**🔹 New Regime**")
                     st.metric("Tax Payable", f"₹{tax_new:,.0f}")
                     st.metric("Take-Home", f"₹{take_home_new:,.0f}")
                 with col2:
-                    st.caption("🔸 Old Regime")
+                    st.caption("**🔸 Old Regime**")
                     st.metric("Tax Payable", f"₹{tax_old:,.0f}")
                     st.metric("Take-Home", f"₹{take_home_old:,.0f}")
 
@@ -1415,23 +1413,51 @@ elif st.session_state.page == 'cagr':
             )
             fig.update_yaxes(tickprefix="₹")
             st.plotly_chart(fig, use_container_width=True)
-            
+
+# ------------------------------------------------------------------
+# RETIREMENT PAGE
+# ------------------------------------------------------------------             
+
 elif st.session_state.page == 'retirement':
-    col_home, _ = st.columns([1, 9])
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_retire", type="secondary", use_container_width=True):
+        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
-    st.title("Retirement Planning Calculator")
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
 
-    input_col, result_col, display_col = st.columns([0.3, 0.3, 0.4])
+        <div class="banner">
+            Retirement Planning Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.54])
 
     with input_col:
         with st.form("retire_form"):
             current_age = st.number_input("Current Age", min_value=20, max_value=70, value=35)
             retire_age = st.number_input("Retirement Age", min_value=40, max_value=80, value=60)
             monthly_expense = st.number_input("Monthly Expense Today (₹)", min_value=5000, value=50000, step=5000)
+            st.divider()
             inflation = st.slider("Inflation Rate (%)", min_value=3.0, max_value=10.0, value=6.0, step=0.5)
             roi_post = st.slider("Post-Retirement ROI (%)", min_value=3.0, max_value=10.0, value=7.0, step=0.5)
             roi_pre = st.slider("Pre-Retirement ROI (%)", min_value=6.0, max_value=15.0, value=10.0, step=0.5)
@@ -1467,10 +1493,11 @@ elif st.session_state.page == 'retirement':
             else:
                 monthly_savings = corpus / n
 
-            st.markdown("### 📊 Results")
-            st.metric("Retirement Corpus Needed", f"₹{corpus:,.0f}")
-            st.metric("Monthly Savings Required", f"₹{monthly_savings:,.0f}")
-            st.caption(f"Based on {instrument if instrument != 'None' else 'Custom'} ROI")
+            with st.container(border=True):
+                c1, c2 = st.columns(2)
+                c1.metric("Retirement Corpus Needed", f"₹{corpus:,.0f}")
+                c2.metric("Monthly Savings Required", f"₹{monthly_savings:,.0f}")
+                st.caption(f"Based on {instrument if instrument != 'None' else 'Custom'} ROI")
 
     with display_col:
         if submitted:
@@ -1488,8 +1515,13 @@ elif st.session_state.page == 'retirement':
                 height=400
             )
             fig.update_yaxes(tickprefix="₹")
-            st.plotly_chart(fig, use_container_width=True)
-            
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+
+# ------------------------------------------------------------------
+# EMERGENCY FUND PAGE
+# ------------------------------------------------------------------              
+
 elif st.session_state.page == 'emergency':
     col_home, _ = st.columns([1, 9])
     with col_home:
@@ -1542,24 +1574,55 @@ elif st.session_state.page == 'emergency':
             ))
             fig.update_layout(height=300)
             st.plotly_chart(fig, use_container_width=True)
+
+# ------------------------------------------------------------------
+# HOME AFFORDABILITY PAGE
+# ------------------------------------------------------------------ 
             
 elif st.session_state.page == 'home_af':
-    col_home, _ = st.columns([1, 9])
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_home", type="secondary", use_container_width=True):
+        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
-    st.title("Home Affordability Calculator")
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
 
-    input_col, result_col, display_col = st.columns([0.3, 0.3, 0.4])
+        <div class="banner">
+            Home Affordability Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Home Affordability Calculator")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
 
     with input_col:
         with st.form("home_form"):
             annual_income = st.number_input("Annual Income (₹)", min_value=300000, value=1200000, step=100000)
             down_payment = st.number_input("Down Payment (₹)", min_value=100000, value=1000000, step=100000)
+            st.divider()
             interest_rate = st.slider("Home Loan Interest (%)", min_value=6.0, max_value=12.0, value=8.5, step=0.1)
             loan_tenure = st.slider("Loan Tenure (Years)", min_value=5, max_value=30, value=20, step=1)
+            st.divider()
             property_tax = st.number_input("Annual Property Tax (₹)", min_value=0, value=20000, step=5000)
             insurance = st.number_input("Annual Insurance (₹)", min_value=0, value=10000, step=1000)
             maintenance = st.number_input("Annual Maintenance (₹)", min_value=0, value=30000, step=5000)
@@ -1567,9 +1630,9 @@ elif st.session_state.page == 'home_af':
 
     with result_col:
         if submitted:
-            # Max EMI (typically 40-50% of monthly income)
+            # Max EMI (typically 60% of monthly income)
             monthly_income = annual_income / 12
-            max_emi = monthly_income * 0.5
+            max_emi = monthly_income * 0.6
 
             # Loan amount based on EMI
             r = interest_rate / 100 / 12
@@ -1582,11 +1645,15 @@ elif st.session_state.page == 'home_af':
             home_price = loan_amount + down_payment
             total_annual_cost = property_tax + insurance + maintenance + (max_emi * 12)
 
-            st.markdown("### 📊 Results")
-            st.metric("Max Home Price", f"₹{home_price:,.0f}")
-            st.metric("Loan Eligible", f"₹{loan_amount:,.0f}")
-            st.metric("Monthly EMI", f"₹{max_emi:,.0f}")
-            st.metric("Total Annual Cost", f"₹{total_annual_cost:,.0f}")
+            with st.container(border=True):
+                c1, c2 = st.columns(2)
+                c1.metric("Max Home Price", f"₹{home_price:,.0f}")
+                c2.metric("Loan Eligible", f"₹{loan_amount:,.0f}")
+                
+            with st.container(border=True):
+                c1, c2 = st.columns(2)                
+                c1.metric("Monthly EMI", f"₹{max_emi:,.0f}")
+                c2.metric("Total Annual Cost", f"₹{total_annual_cost:,.0f}")
 
     with display_col:
         if submitted:
@@ -1594,4 +1661,292 @@ elif st.session_state.page == 'home_af':
             values = [down_payment, loan_amount]
             fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.4)])
             fig.update_layout(title="Home Purchase Breakdown", height=400)
-            st.plotly_chart(fig, use_container_width=True)
+            
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+            
+# ------------------------------------------------------------------
+# CAR LOAN & DEPRECIATION PAGE
+# ------------------------------------------------------------------ 
+            
+elif st.session_state.page == 'car':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            Car Loan & Depreciation Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Car Loan & Depreciation Calculator")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
+
+    with input_col:
+        with st.form("car_form"):
+            car_price = st.number_input("Car Price (₹)", min_value=100000, value=1000000, step=50000)
+            down_payment = st.number_input("Down Payment (₹)", min_value=0, value=200000, step=10000)
+            st.divider()
+            interest_rate = st.slider("Loan Interest (%)", min_value=7.0, max_value=14.0, value=9.0, step=0.1)
+            loan_tenure = st.slider("Loan Tenure (Years)", min_value=1, max_value=7, value=5, step=1)
+            depreciation = st.slider("Annual Depreciation (%)", min_value=10.0, max_value=30.0, value=20.0, step=1.0)
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            loan_amount = car_price - down_payment
+            r = interest_rate / 100 / 12
+            n = loan_tenure * 12
+            if r > 0:
+                emi = loan_amount * r * (1 + r)**n / ((1 + r)**n - 1)
+            else:
+                emi = loan_amount / n
+
+            total_payment = emi * n
+            total_interest = total_payment - loan_amount
+
+            # Depreciation over 5 years
+            years = np.arange(0, 6)
+            resale_values = [car_price * ((1 - depreciation/100) ** y) for y in years]
+
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Loan Amount", f"₹{loan_amount:,.0f}")
+                c2.metric("EMI", f"₹{emi:,.0f}")
+                c3.metric("Total Interest", f"₹{total_interest:,.0f}")
+
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)                
+                c1.metric("Resale Value (Year 5)", f"₹{resale_values[5]:,.0f}")
+
+    with display_col:
+        if submitted:
+            years = np.arange(0, 6)
+            resale_values = [car_price * ((1 - depreciation/100) ** y) for y in years]
+            
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=years, y=resale_values, mode='lines+markers', name='Resale Value'))
+            fig.update_layout(
+                title="Car Depreciation Over Time",
+                xaxis_title="Years",
+                yaxis_title="Value (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig.update_yaxes(tickprefix="₹")
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+
+# ------------------------------------------------------------------
+# INFLATION IMPACT PAGE
+# ------------------------------------------------------------------ 
+            
+elif st.session_state.page == 'inflation':
+    
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            Inflation Impact Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Inflation Impact Calculator")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
+
+    with input_col:
+        
+        with st.form("inflation_form"):
+            calc_type = st.radio("Calculation Type", ["Future Value", "Present Value"])
+            st.divider()
+            if calc_type == "Future Value":
+                present_value = st.number_input("Amount Today (₹)", min_value=1000, value=100000, step=10000)
+                years = st.slider("Years", min_value=1, max_value=30, value=10, step=1)
+            else:
+                future_value = st.number_input("Future Amount (₹)", min_value=1000, value=200000, step=10000)
+                years = st.slider("Years", min_value=1, max_value=30, value=10, step=1)
+            inflation = st.slider("Inflation Rate (%)", min_value=3.0, max_value=12.0, value=6.0, step=0.5)
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            if calc_type == "Future Value":
+                future_val = present_value * ((1 + inflation/100) ** years)
+                with st.container(border=True):
+                    c1, c2, c3 = st.columns(3)
+                    c1.metric("Future Value", f"₹{future_val:,.0f}")
+                    st.caption(f"₹{present_value:,.0f} today will be worth ₹{future_val:,.0f} in {years} years")
+            else:
+                present_val = future_value / ((1 + inflation/100) ** years)
+                with st.container(border=True):
+                    c1, c2, c3 = st.columns(3)
+                    c1.metric("Present Value", f"₹{present_val:,.0f}")
+                    st.caption(f"You need ₹{present_val:,.0f} today to have ₹{future_value:,.0f} in {years} years")
+
+    with display_col:
+        if submitted:
+            years_range = np.arange(0, years + 1)
+            if calc_type == "Future Value":
+                values = [present_value * ((1 + inflation/100) ** y) for y in years_range]
+                title = "Purchasing Power Erosion"
+            else:
+                values = [future_value / ((1 + inflation/100) ** (years - y)) for y in years_range]
+                title = "Required Investment Growth"
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=years_range, y=values, mode='lines', name='Value'))
+            fig.update_layout(
+                title=title,
+                xaxis_title="Years",
+                yaxis_title="Amount (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig.update_yaxes(tickprefix="₹")
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+
+# ------------------------------------------------------------------
+# PPF / Sukanya Samriddhi / NSC PAGE
+# ------------------------------------------------------------------ 
+            
+elif st.session_state.page == 'tax_saving':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            Tax-Saving Instruments Calculator | PPF / Sukanya Samriddhi / NSC
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Tax-Saving Instruments Calculator")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
+
+    with input_col:
+        
+        with st.form("tax_saving_form"):
+            instrument = st.selectbox("Instrument", ["PPF", "Sukanya Samriddhi", "NSC"])
+            st.divider()
+            yearly_deposit = st.number_input("Yearly Deposit (₹)", min_value=1000, max_value=150000, value=150000, step=5000)
+            years = st.slider("Tenure (Years)", min_value=5, max_value=20, 
+                              value={"PPF": 15, "Sukanya Samriddhi": 14, "NSC": 5}[instrument], 
+                              step=1, disabled=True)
+            submitted = st.form_submit_button("Calculate")
+
+    with result_col:
+        if submitted:
+            # Current rates (as of 2025)
+            rates = {"PPF": 7.1, "Sukanya Samriddhi": 8.2, "NSC": 7.7}
+            rate = rates[instrument]
+            r = rate / 100
+
+            # PPF/Sukanya: compounding annually, deposit at year start
+            maturity = 0
+            balance = 0
+            for y in range(years):
+                balance = (balance + yearly_deposit) * (1 + r)
+                maturity = balance
+
+            total_invested = yearly_deposit * years
+            interest_earned = maturity - total_invested
+
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Total Invested", f"₹{total_invested:,.0f}")
+                c2.metric("Maturity Amount", f"₹{maturity:,.0f}")
+                c3.metric("Interest Earned", f"₹{interest_earned:,.0f}")
+                st.caption(f"Interest Rate: {rate}% (as of 2025)")
+
+    with display_col:
+        if submitted:
+            # Year-wise growth
+            balance = 0
+            years_list = []
+            balances = []
+            for y in range(1, years + 1):
+                balance = (balance + yearly_deposit) * (1 + r)
+                years_list.append(y)
+                balances.append(balance)
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=years_list, y=balances, mode='lines+markers', name='Maturity Value'))
+            fig.update_layout(
+                title=f"{instrument} Growth Over Time",
+                xaxis_title="Years",
+                yaxis_title="Amount (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig.update_yaxes(tickprefix="₹")
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
