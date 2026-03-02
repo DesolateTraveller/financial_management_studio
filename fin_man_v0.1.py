@@ -855,7 +855,7 @@ elif st.session_state.page == 'loan':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_loan", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1045,7 +1045,7 @@ elif st.session_state.page == 'loan':
                         dict(text="Reducing", x=0.22, y=0.5, font_size=12, showarrow=False),
                         dict(text="Flat", x=0.78, y=0.5, font_size=12, showarrow=False)
                     ],
-                    height=350
+                    height=500
                 )
                 with st.container(border=True):
                     st.plotly_chart(fig2, use_container_width=True)
@@ -1193,7 +1193,7 @@ elif st.session_state.page == 'tax':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1321,7 +1321,7 @@ elif st.session_state.page == 'cagr':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_cagr", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1373,13 +1373,13 @@ elif st.session_state.page == 'cagr':
             cagr1 = cagr(initial1, final1, years1)
             cagr2 = cagr(initial2, final2, years2) if initial2 > 0 and final2 > 0 else None
 
-            st.markdown("### 📊 Results")
-            if cagr1 is not None:
-                st.metric("Asset 1 CAGR", f"{cagr1:.2%}")
-            if cagr2 is not None:
-                st.metric("Asset 2 CAGR", f"{cagr2:.2%}")
-                diff = cagr1 - cagr2
-                st.metric("Difference", f"{diff:.2%}", delta="Higher" if diff > 0 else "Lower")
+            with st.container(border=True):
+                if cagr1 is not None:
+                    st.metric("Asset 1 CAGR", f"{cagr1:.2%}")
+                if cagr2 is not None:
+                    st.metric("Asset 2 CAGR", f"{cagr2:.2%}")
+                    diff = cagr1 - cagr2
+                    st.metric("Difference", f"{diff:.2%}", delta="Higher" if diff > 0 else "Lower")
 
             with st.expander("🧮 Formula"):
                 st.markdown(r"""
@@ -1407,8 +1407,7 @@ elif st.session_state.page == 'cagr':
                 yaxis_title="Value (₹)",
                 hovermode="x unified",
                 template="plotly_white",
-                height=500
-            )
+                height=500)
             fig.update_yaxes(tickprefix="₹")
             st.plotly_chart(fig, use_container_width=True)
 
@@ -1551,8 +1550,7 @@ elif st.session_state.page == 'retirement':
                 xaxis_title="Age",
                 yaxis_title="Expense (₹)",
                 template="plotly_white",
-                height=400
-            )
+                height=400)
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
@@ -1625,7 +1623,7 @@ elif st.session_state.page == 'home_af':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1725,7 +1723,7 @@ elif st.session_state.page == 'home_af':
             labels = ['Down Payment', 'Loan Amount']
             values = [down_payment, loan_amount]
             fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.4, marker_colors=['#4ade80', '#38bdf8'])])
-            fig.update_layout(title="Home Purchase Breakdown", height=300)
+            fig.update_layout(title="Home Purchase Breakdown", height=450)
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
 
@@ -1737,7 +1735,7 @@ elif st.session_state.page == 'home_af':
                 y=[emi_monthly, property_tax/12, insurance/12, maintenance/12],
                 marker_color=['#38bdf8', '#f87171', '#fb923c', '#a78bfa']
             ))
-            fig2.update_layout(title="Monthly Housing Cost Breakdown", yaxis_title="Amount (₹)", height=300)
+            fig2.update_layout(title="Monthly Housing Cost Breakdown", yaxis_title="Amount (₹)", height=500)
             fig2.update_yaxes(tickprefix="₹")
             
             with st.container(border=True):
@@ -1754,7 +1752,7 @@ elif st.session_state.page == 'car':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1884,7 +1882,7 @@ elif st.session_state.page == 'inflation':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -2031,7 +2029,7 @@ elif st.session_state.page == 'tax_saving':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
