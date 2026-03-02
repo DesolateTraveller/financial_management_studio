@@ -430,7 +430,7 @@ elif st.session_state.page == 'fd':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -599,8 +599,7 @@ elif st.session_state.page == 'fd':
                     hovermode="x unified",
                     template="plotly_white",
                     height=500,
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-                )
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
                 fig.update_yaxes(tickprefix="₹")
                 st.plotly_chart(fig, use_container_width=True)
             
@@ -614,7 +613,7 @@ elif st.session_state.page == 'rd':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_rd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -841,8 +840,7 @@ elif st.session_state.page == 'rd':
                 yaxis_title="Amount (₹)",
                 hovermode="x unified",
                 template="plotly_white",
-                height=500
-            )
+                height=500)
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
@@ -1063,7 +1061,7 @@ elif st.session_state.page == 'sip':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_sip", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1425,7 +1423,7 @@ elif st.session_state.page == 'retirement':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("← Home", key="home_tax", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
             go_home()
             st.rerun()
 
@@ -1847,7 +1845,6 @@ elif st.session_state.page == 'car':
                 else:
                     st.info("✅ Net cost is less than original price — good deal!")
 
-
     with display_col:
         if submitted:
             years = np.arange(0, loan_tenure + 1)
@@ -1934,26 +1931,81 @@ elif st.session_state.page == 'inflation':
         if submitted:
             if calc_type == "Future Value":
                 future_val = present_value * ((1 + inflation/100) ** years)
+                equivalent_today = present_value
+                target = future_val
+                
                 with st.container(border=True):
                     c1, c2, c3 = st.columns(3)
                     c1.metric("Future Value", f"₹{future_val:,.0f}")
-                    st.caption(f"₹{present_value:,.0f} today will be worth ₹{future_val:,.0f} in {years} years")
+                    st.caption(f"₹{present_value:,.0f} today will have the purchasing power of **₹{present_value:,.0f}** in the future, but you'll need **₹{future_val:,.0f}** to buy the same goods.")
             else:
                 present_val = future_value / ((1 + inflation/100) ** years)
+                equivalent_today = present_val
+                target = future_value
+                
                 with st.container(border=True):
                     c1, c2, c3 = st.columns(3)
                     c1.metric("Present Value", f"₹{present_val:,.0f}")
-                    st.caption(f"You need ₹{present_val:,.0f} today to have ₹{future_value:,.0f} in {years} years")
+                    st.caption(f"To have ₹{future_value:,.0f} in {years} years, you must invest **₹{present_val:,.0f}** today.")
 
+            with st.expander("🧮 Detailed Calculation", expanded=True):
+                r = inflation / 100
+                if calc_type == "Future Value":
+                    st.markdown(f"""
+                    **Future Value Formula**:  
+                    $$
+                    FV = PV \\times (1 + r)^n = {present_value:,.0f} \\times (1 + {r:.2f})^{{{years}}} = ₹{future_val:,.0f}
+                    $$
+
+                    **Purchasing Power Erosion**:  
+                    In {years} years, ₹{present_value:,.0f} will only buy what ₹{present_value / ((1 + r)**years):,.0f} buys today.
+                    """)
+                else:
+                    st.markdown(f"""
+                    **Present Value Formula**:  
+                    $$
+                    PV = \\frac{{FV}}{{(1 + r)^n}} = \\frac{{{future_value:,.0f}}}{{(1 + {r:.2f})^{{{years}}}}} = ₹{present_val:,.0f}
+                    $$
+
+                    **Real Growth Needed**:  
+                    Your investment must grow at least {inflation}% annually just to maintain purchasing power.
+                    """)
+            
+            with st.container(border=True):
+                years_list = []
+                values_list = []
+                for y in range(0, years + 1, max(1, years // 10)):
+                    if calc_type == "Future Value":
+                        val = present_value * ((1 + inflation/100) ** y)
+                    else:
+                        val = future_value / ((1 + inflation/100) ** (years - y))
+                    years_list.append(y)
+                    values_list.append(round(val, 0))
+
+                infl_df = pd.DataFrame({
+                    "Year": years_list,
+                    "Value (₹)": values_list
+                })
+                st.dataframe(infl_df, use_container_width=True, hide_index=True)
+
+                # --- Insight ---
+                if calc_type == "Future Value":
+                    loss_in_purchasing_power = present_value - (present_value / ((1 + inflation/100) ** years))
+                    st.warning(f"⚠️ Due to inflation, ₹{present_value:,.0f} loses ₹{loss_in_purchasing_power:,.0f} in real value over {years} years.")
+                else:
+                    st.info("💡 To beat inflation, invest in assets that yield returns > inflation rate.")
+                
     with display_col:
         if submitted:
             years_range = np.arange(0, years + 1)
             if calc_type == "Future Value":
                 values = [present_value * ((1 + inflation/100) ** y) for y in years_range]
                 title = "Purchasing Power Erosion"
+                y_label = "Future Amount Needed (₹)"
             else:
                 values = [future_value / ((1 + inflation/100) ** (years - y)) for y in years_range]
-                title = "Required Investment Growth"
+                title = "Investment Required Today"
+                y_label = "Present Value (₹)"
 
             fig = go.Figure()
             fig.add_trace(go.Scatter(x=years_range, y=values, mode='lines', name='Value'))
