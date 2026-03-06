@@ -25,7 +25,7 @@ from scipy.stats import gaussian_kde
 #---------------------------------------------------------------------------------------------------------------------------------
 st.set_page_config(page_title="Financial Management Studio | v0.1",
                     layout="wide",
-                    page_icon="📊",            
+                    page_icon="₹",            
                     initial_sidebar_state="auto")
 #---------------------------------------------------------------------------------------------------------------------------------
 ### CSS
@@ -2116,3 +2116,4 @@ elif st.session_state.page == 'tax_saving':
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
+
