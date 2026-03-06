@@ -2116,4 +2116,3 @@ elif st.session_state.page == 'tax_saving':
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
-
