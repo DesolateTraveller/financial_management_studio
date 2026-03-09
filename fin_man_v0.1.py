@@ -401,7 +401,23 @@ if st.session_state.page == 'home':
         if st.button("Open Calculator", key="btn_car", use_container_width=True, type="primary"):
                 st.session_state.page = 'car'
                 st.rerun()
-                                                        
+
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span="card-icon">🎯</span> Goal-Based Savings Calculator </div>
+                <ul class="card-list">
+                    <li>Set custom financial goals</li>
+                    <li>Inflation-adjusted targets</li>
+                    <li>Instrument-specific SIP planning</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_goal", use_container_width=True, type="primary"):
+                st.session_state.page = 'goal'
+                st.rerun()
+                                                                        
     with cols[3]:
         
         st.markdown(
@@ -419,10 +435,43 @@ if st.session_state.page == 'home':
         if st.button("Open Calculator", key="btn_retirement", use_container_width=True, type="primary"):
                 st.session_state.page = 'retirement'
                 st.rerun()
-                                    
+
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">⚖️</span> Debt Payoff Planner </div>
+                <ul class="card-list">
+                    <li>Multiple loan payoff strategies</li>
+                    <li>Interest saved comparison</li>
+                    <li>Timeline visualization</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_debt", use_container_width=True, type="primary"):
+                st.session_state.page = 'debt'
+                st.rerun()
+
+        st.markdown(
+            """
+            <div class="card">
+                <div class="card-title"><span class="card-icon">📊</span> Net Worth Tracker & Projection</div>
+                <ul class="card-list">
+                    <li>Assets & liabilities snapshot</li>
+                    <li>5-year projection</li>
+                    <li>Growth rate analysis</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True)
+        if st.button("Open Calculator", key="btn_networth", use_container_width=True, type="primary"):
+                st.session_state.page = 'networth'
+                st.rerun() 
+                                                   
 # ------------------------------------------------------------------
 # FIXED DEPOSIT PAGE
 # ------------------------------------------------------------------
+
 elif st.session_state.page == 'fd':
     
     st.divider()
@@ -606,6 +655,7 @@ elif st.session_state.page == 'fd':
 # ------------------------------------------------------------------
 # RECURRING DEPOSIT PAGE
 # ------------------------------------------------------------------
+
 elif st.session_state.page == 'rd':
  
     st.divider()
@@ -848,6 +898,7 @@ elif st.session_state.page == 'rd':
 # ------------------------------------------------------------------
 # LOAN EMI PAGE
 # ------------------------------------------------------------------
+
 elif st.session_state.page == 'loan':
 
     st.divider()
@@ -2116,3 +2167,496 @@ elif st.session_state.page == 'tax_saving':
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
                 st.plotly_chart(fig, use_container_width=True)
+                
+# ------------------------------------------------------------------
+# Debt Payoff Planner
+# ------------------------------------------------------------------ 
+                
+elif st.session_state.page == 'debt':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("Home", icon="🏠", key="home_debt", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            Debt Payoff Planner | Snowball vs Avalanche
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Debt Payoff Planner: Snowball vs Avalanche")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.3, 0.5])
+
+    with input_col:
+        with st.form("debt_form"):
+            #st.markdown("### Add Debts")
+            debt_names = st.text_input("Debt Names (comma-separated)", value="Credit Card, Personal Loan, Education Loan")
+            balances = st.text_input("Balances (₹, comma)", value="200000, 500000, 300000")
+            rates = st.text_input("Interest Rates (% p.a., comma)", value="24, 15, 12")
+            min_payments = st.text_input("Min. Monthly Payments (₹, comma)", value="50, 0000,00")
+            
+            extra_payment = st.number_input("Extra Monthly Payment (₹)", min_value=0, value=15000, step=1000)
+            submitted = st.form_submit_button("Compare Payoff Strategies")
+
+    with result_col:
+        if submitted:
+            try:
+                names = [n.strip() for n in debt_names.split(",")]
+                bal = [float(b) for b in balances.split(",")]
+                rate = [float(r) for r in rates.split(",")]
+                min_pay = [float(mp) for mp in min_payments.split(",")]
+
+                if not (len(names) == len(bal) == len(rate) == len(min_pay)):
+                    raise ValueError("All fields must have same number of entries.")
+
+                debts = list(zip(names, bal, rate, min_pay))
+                total_debt = sum(bal)
+
+                # --- Define simulation function ---
+                def simulate_strategy(debts, strategy="snowball", extra_payment=extra_payment):
+                    balances = [b for _, b, _, _ in debts]
+                    rates = [r for _, _, r, _ in debts]
+                    min_payments = [mp for _, _, _, mp in debts]
+                    total_interest = 0.0
+                    month = 0
+                    n = len(debts)
+
+                    while any(b > 0.01 for b in balances):
+                        month += 1
+                        remaining_extra = extra_payment
+
+                        # Accrue interest on all active debts
+                        for i in range(n):
+                            if balances[i] <= 0:
+                                continue
+                            interest = balances[i] * (rates[i] / 100) / 12
+                            total_interest += interest
+                            balances[i] += interest
+
+                        # Determine payoff order
+                        if strategy == "snowball":
+                            order = sorted(range(n), key=lambda i: balances[i])
+                        else:  # avalanche
+                            order = sorted(range(n), key=lambda i: -rates[i])
+
+                        # Apply payments
+                        for i in order:
+                            if balances[i] <= 0:
+                                continue
+                            total_available = min_payments[i] + remaining_extra
+                            payment = min(balances[i], total_available)
+                            balances[i] -= payment
+                            used_extra = max(0, payment - min_payments[i])
+                            remaining_extra -= used_extra
+                            if remaining_extra < 0:
+                                remaining_extra = 0
+
+                    return month, total_interest
+
+                # --- Run both strategies ---
+                months_snow, int_snow = simulate_strategy(debts, "snowball")
+                months_aval, int_aval = simulate_strategy(debts, "avalanche")
+
+                # --- Store in session state or use directly ---
+                # Proceed to display results
+
+                #st.markdown("### 📊 Payoff Comparison")
+                
+                with st.container(border=True):
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.caption("❄️ Snowball (Lowest Balance First)")
+                        st.metric("Months to Clear", months_snow)
+                        st.metric("Total Interest", f"₹{int_snow:,.0f}")
+                    with col2:
+                        st.caption("🔥 Avalanche (Highest Rate First)")
+                        st.metric("Months to Clear", months_aval)
+                        st.metric("Total Interest", f"₹{int_aval:,.0f}")
+
+                with st.container(border=True):
+                    
+                    if int_aval < int_snow:
+                        st.success(f"✅ Avalanche saves ₹{int_snow - int_aval:,.0f} in interest.")
+                    else:
+                        st.warning(f"⚠️ Snowball saves ₹{int_aval - int_snow:,.0f} — but avalanche is mathematically optimal.")
+
+                with st.expander("🧮 Strategy Logic", expanded=True):
+                    st.markdown("""
+                    **Snowball**: Pay off smallest balance first → psychological wins.  
+                    **Avalanche**: Pay highest-interest debt first → minimizes total interest.  
+                    *Extra payment is applied after minimum payments.*
+                    """)
+
+            except Exception as e:
+                st.error(f"❌ Invalid input: {e}")
+                # Prevent display_col from running
+                st.session_state.debt_results = None
+                #return  # Exit early
+
+            # If successful, save results for display_col
+            st.session_state.debt_results = {
+                "months_snow": months_snow,
+                "int_snow": int_snow,
+                "months_aval": months_aval,
+                "int_aval": int_aval,
+                "total_debt": total_debt
+            }
+
+    # --- Display Column ---
+    with display_col:
+        if submitted and 'debt_results' in st.session_state:
+            res = st.session_state.debt_results
+            months_snow = res["months_snow"]
+            int_snow = res["int_snow"]
+            months_aval = res["months_aval"]
+            int_aval = res["int_aval"]
+            total_debt = res["total_debt"]
+
+            fig = go.Figure()
+            fig.add_trace(go.Bar(
+                x=["Snowball", "Avalanche"],
+                y=[int_snow, int_aval],
+                marker_color=["#f59e0b", "#10b981"],
+                text=[f"₹{int_snow:,.0f}", f"₹{int_aval:,.0f}"],
+                textposition='outside'
+            ))
+            fig.update_layout(
+                title="Total Interest Paid",
+                yaxis_title="Interest (₹)",
+                template="plotly_white",
+                height=350
+            )
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+
+            #st.markdown("### ⏳ Payoff Timeline")
+            timeline_data = {
+                "Strategy": ["Snowball", "Avalanche"],
+                "Debts Cleared (Month)": [months_snow, months_aval],
+                "Total Cost": [int_snow + total_debt, int_aval + total_debt]
+            }
+            
+            with st.container(border=True):
+                st.dataframe(pd.DataFrame(timeline_data), use_container_width=True)
+
+# ------------------------------------------------------------------
+# Goal-Based Savings Calculator
+# ------------------------------------------------------------------ 
+            
+elif st.session_state.page == 'goal':
+    
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("Home", icon="🏠", key="home_goal", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            Goal-Based Savings Calculator
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Goal-Based Savings Calculator")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.4, 0.4])
+
+    with input_col:
+        with st.form("goal_form"):
+            goal_name = st.text_input("Goal Name", value="Child's Education")
+            target_amount = st.number_input("Target Amount (₹)", min_value=100000, value=5000000, step=100000)
+            years = st.slider("Time Until Goal (Years)", min_value=1, max_value=30, value=15, step=1)
+            inflation = st.slider("Inflation Adjustment (%)", min_value=0.0, max_value=10.0, value=6.0, step=0.5)
+            instrument = st.selectbox("Investment Instrument", ["Equity (12%)", "Hybrid (10%)", "PPF (7.1%)", "FD (6.5%)"])
+            submitted = st.form_submit_button("Calculate Savings Plan")
+
+    with result_col:
+        if submitted:
+            # Adjust target for inflation
+            r_infl = inflation / 100
+            future_target = target_amount * ((1 + r_infl) ** years)
+
+            # ROI mapping
+            roi_map = {"Equity (12%)": 12.0, "Hybrid (10%)": 10.0, "PPF (7.1%)": 7.1, "FD (6.5%)": 6.5}
+            roi = roi_map[instrument]
+            r_monthly = roi / 100 / 12
+            n = years * 12
+
+            # Monthly SIP needed
+            if r_monthly > 0:
+                monthly_sip = future_target * r_monthly / ((1 + r_monthly) ** n - 1)
+            else:
+                monthly_sip = future_target / n
+
+            total_invested = monthly_sip * n
+            interest_earned = future_target - total_invested
+
+            # --- Key Results ---
+            #st.markdown("### 🎯 Goal Summary")
+            with st.container(border=True):
+                c1, c2 = st.columns(2)
+                c1.metric("Inflation-Adjusted Target", f"₹{future_target:,.0f}")
+                c1.metric("Total Invested", f"₹{total_invested:,.0f}")
+                
+                c2.metric("Monthly SIP Required", f"₹{monthly_sip:,.0f}")
+                c2.metric("Interest Earned", f"{interest_earned:,.0f}")
+
+            # --- Detailed Calculation ---
+            with st.expander("🧮 How It's Calculated", expanded=True):
+                st.markdown(f"""
+                **1. Inflation-Adjusted Target**  
+                ₹{target_amount:,.0f} × (1 + {inflation}%)^{years} = **₹{future_target:,.0f}**
+
+                **2. Monthly SIP Formula**  
+                $$
+                P = \\frac{{F \\cdot r}}{{(1 + r)^n - 1}} = \\frac{{{future_target:,.0f} \\cdot {r_monthly:.6f}}}{{(1 + {r_monthly:.6f})^{{{n}}} - 1}} = ₹{monthly_sip:,.0f}
+                $$
+
+                **3. Assumed Return**: {roi}% p.a. ({instrument})
+                """)
+
+            # --- Year-wise Progress Table ---
+            #st.markdown("### 📈 Yearly Milestones")
+            milestones = []
+            for y in range(1, years + 1, max(1, years // 5)):
+                months = y * 12
+                value = monthly_sip * (((1 + r_monthly)**months - 1) / r_monthly)
+                milestones.append({
+                    "Year": y,
+                    "Accumulated (₹)": round(value, 0),
+                    "% of Goal": f"{value/future_target*100:.1f}%"
+                })
+            milestone_df = pd.DataFrame(milestones)
+            with st.container(border=True):
+                st.dataframe(milestone_df, use_container_width=True, hide_index=True)
+
+                # --- Insight ---
+                if monthly_sip > (target_amount / (years * 12)) * 1.5:
+                    st.warning("💡 Monthly SIP is high. Consider extending timeline or higher-return instruments.")
+                else:
+                    st.success("✅ Achievable with disciplined investing.")
+
+    with display_col:
+        if submitted:
+            # Growth curve
+            months_arr = np.arange(0, n + 1, max(1, n // 50))
+            # Handle r_monthly = 0 to avoid division by zero
+            if r_monthly > 0:
+                values = [monthly_sip * (((1 + r_monthly)**m - 1) / r_monthly) for m in months_arr]
+            else:
+                values = [monthly_sip * m for m in months_arr]  # linear growth if 0% return
+            
+            years_axis = [m / 12 for m in months_arr]
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(
+                x=years_axis,
+                y=values,
+                mode='lines',
+                name='Savings Value',
+                line=dict(color='#06b6d4')
+            ))
+            fig.add_hline(
+                y=future_target,
+                line_dash="dot",
+                line_color="red",
+                annotation_text="Goal Target"
+            )
+            fig.update_layout(
+                title=f"{goal_name} Savings Journey",
+                xaxis_title="Years",
+                yaxis_title="Amount (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig.update_yaxes(tickprefix="₹")
+            
+            with st.container(border=True):
+                st.plotly_chart(fig, use_container_width=True)
+            
+# ------------------------------------------------------------------
+# Net Worth Tracker & Projection
+# ------------------------------------------------------------------ 
+           
+elif st.session_state.page == 'networth':
+
+    st.divider()
+    
+    # ← Home button (top-left)
+    col_home, title= st.columns([1,15,])
+    with col_home:
+        if st.button("Home", icon="🏠", key="home_networth", type="secondary", use_container_width=True):
+            go_home()
+            st.rerun()
+
+    with title:
+        st.markdown("""
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
+
+        <div class="banner">
+            Net Worth Tracker & Projection
+        </div>
+        """, unsafe_allow_html=True)
+
+    #st.title("Net Worth Tracker & Projection")
+
+    input_col, result_col, display_col = st.columns([0.2, 0.4, 0.4])
+
+    with input_col:
+        with st.form("networth_form"):
+            st.markdown("#### Assets")
+            cash = st.number_input("Cash & Savings (₹)", min_value=0, value=200000, step=10000)
+            equity = st.number_input("Equity Investments (₹)", min_value=0, value=500000, step=10000)
+            property = st.number_input("Real Estate (₹)", min_value=0, value=8000000, step=100000)
+            other_assets = st.number_input("Other Assets (₹)", min_value=0, value=100000, step=10000)
+
+            st.markdown("#### Liabilities")
+            home_loan = st.number_input("Home Loan (₹)", min_value=0, value=4000000, step=100000)
+            car_loan = st.number_input("Car Loan (₹)", min_value=0, value=500000, step=10000)
+            credit_card = st.number_input("Credit Card Due (₹)", min_value=0, value=50000, step=1000)
+            other_liab = st.number_input("Other Liabilities (₹)", min_value=0, value=100000, step=10000)
+
+            st.markdown("#### Assumptions")
+            asset_growth = st.slider("Avg. Asset Growth (%)", min_value=0.0, max_value=15.0, value=8.0, step=0.5)
+            liability_reduction = st.slider("Liability Reduction (%)", min_value=0.0, max_value=20.0, value=5.0, step=0.5)
+            submitted = st.form_submit_button("Calculate Net Worth")
+
+    with result_col:
+        if submitted:
+            total_assets = cash + equity + property + other_assets
+            total_liabilities = home_loan + car_loan + credit_card + other_liab
+            net_worth = total_assets - total_liabilities
+
+            # Project 5 years
+            projections = [{"Year": 0, "Assets": total_assets, "Liabilities": total_liabilities, "Net Worth": net_worth}]
+            for y in range(1, 6):
+                assets_prev = projections[-1]["Assets"]
+                liab_prev = projections[-1]["Liabilities"]
+                assets_new = assets_prev * (1 + asset_growth / 100)      
+                liab_new = liab_prev * (1 - liability_reduction / 100)
+                projections.append({
+                    "Year": y,
+                    "Assets": assets_new,
+                    "Liabilities": liab_new,
+                    "Net Worth": assets_new - liab_new
+                })
+
+            df_proj = pd.DataFrame(projections)
+            df_proj["Net Worth"] = df_proj["Net Worth"].round(0)
+            df_proj["Assets"] = df_proj["Assets"].round(0)
+            df_proj["Liabilities"] = df_proj["Liabilities"].round(0)
+
+            # --- Key Results ---
+            #st.markdown("### 📊 Current Snapshot")
+            with st.container(border=True):
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Total Assets", f"₹{total_assets:,.0f}")
+                col2.metric("Total Liabilities", f"₹{total_liabilities:,.0f}")
+                col3.metric("Net Worth", f"₹{net_worth:,.0f}")
+
+            # --- Projection Table ---
+            with st.container(border=True):
+                st.markdown("#### 📈 5-Year Projection")
+                st.dataframe(df_proj.set_index("Year"), use_container_width=True)
+
+                # --- Insight ---
+                growth_rate = ((net_worth / (total_assets - total_liabilities)) - 1) if (total_assets - total_liabilities) != 0 else 0
+                if net_worth > 0 and df_proj.iloc[-1]["Net Worth"] > net_worth:
+                    st.success(f"✅ Net worth grows at ~{asset_growth - liability_reduction:.1f}% CAGR.")
+                elif net_worth < 0:
+                    st.warning("⚠️ Negative net worth. Prioritize debt reduction.")
+                else:
+                    st.info("📊 Stable — consider increasing asset growth rate.")
+
+            # --- Detailed Breakdown ---
+            with st.expander("🧮 Composition", expanded=True):
+                st.markdown("##### Asset Breakdown")
+                st.write(f"- Cash & Savings: ₹{cash:,.0f} ({cash/total_assets:.1%})")
+                st.write(f"- Equity: ₹{equity:,.0f} ({equity/total_assets:.1%})")
+                st.write(f"- Property: ₹{property:,.0f} ({property/total_assets:.1%})")
+                st.write(f"- Other: ₹{other_assets:,.0f} ({other_assets/total_assets:.1%})")
+                
+                st.markdown("##### Liability Breakdown")
+                st.write(f"- Loan: ₹{home_loan:,.0f} ({home_loan/total_liabilities:.1%})")
+                st.write(f"- Car Loan: ₹{car_loan:,.0f} ({car_loan/total_liabilities:.1%})")
+                st.write(f"- Credit Card: ₹{credit_card:,.0f} ({credit_card/total_liabilities:.1%})")
+
+    with display_col:
+        if submitted:
+            # Net worth trend
+            fig1 = go.Figure()
+            fig1.add_trace(go.Scatter(x=df_proj["Year"], y=df_proj["Net Worth"], mode='lines+markers', name='Net Worth', line=dict(color='#10b981')))
+            fig1.add_trace(go.Scatter(x=df_proj["Year"], y=df_proj["Assets"], mode='lines', name='Assets', line=dict(color='#3b82f6', dash='dash')))
+            fig1.add_trace(go.Scatter(x=df_proj["Year"], y=df_proj["Liabilities"], mode='lines', name='Liabilities', line=dict(color='#ef4444', dash='dot')))
+            fig1.update_layout(
+                title="Net Worth Projection (5 Years)",
+                xaxis_title="Year",
+                yaxis_title="Amount (₹)",
+                template="plotly_white",
+                height=400
+            )
+            fig1.update_yaxes(tickprefix="₹")
+            with st.container(border=True):
+                st.plotly_chart(fig1, use_container_width=True)
+
+            # Pie: Current net worth composition
+            fig2 = go.Figure(data=[go.Pie(
+                labels=['Assets', 'Liabilities'],
+                values=[total_assets, total_liabilities],
+                hole=0.4,
+                marker_colors=['#10b981', '#ef4444']
+            )])
+            fig2.update_layout(title="Current Financial Position", height=500)
+            with st.container(border=True):
+                st.plotly_chart(fig2, use_container_width=True)
