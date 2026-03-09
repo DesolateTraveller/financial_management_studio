@@ -2297,15 +2297,50 @@ elif st.session_state.page == 'debt':
                 with st.container(border=True):
                     
                     if int_aval < int_snow:
-                        st.success(f"✅ Avalanche saves ₹{int_snow - int_aval:,.0f} in interest.")
+                        saved = int_snow - int_aval
+                        st.success(f"✅ **Avalanche is better for you** — it saves **₹{saved:,.0f}** in interest.")
+                    elif int_snow < int_aval:
+                        saved = int_aval - int_snow
+                        st.warning(f"⚠️ **Snowball pays off faster or saves more in your case** — but this is rare. Usually avalanche wins.")
                     else:
-                        st.warning(f"⚠️ Snowball saves ₹{int_aval - int_snow:,.0f} — but avalanche is mathematically optimal.")
+                        st.info("ℹ️ Both strategies yield identical results — likely because your highest-rate debt is also the smallest.")
 
-                with st.expander("🧮 Strategy Logic", expanded=True):
                     st.markdown("""
-                    **Snowball**: Pay off smallest balance first → psychological wins.  
-                    **Avalanche**: Pay highest-interest debt first → minimizes total interest.  
-                    *Extra payment is applied after minimum payments.*
+                    > 💡 **Rule of Thumb**:  
+                    > - Choose **Avalanche** if you’re disciplined and want to **minimize cost**.  
+                    > - Choose **Snowball** if you need **quick wins** to stay motivated.
+
+                    > 📌 **Note**: This simulation assumes:
+                    > - Monthly compounding
+                    > - No new debt added
+                    > - Extra payment applied after minimums
+                    """)
+
+                with st.expander("🧮 Strategy Logic & Detailed Breakdown", expanded=True):
+                    # Identify first debt under each strategy
+                    snowball_first = min(debts, key=lambda x: x[1])  # by balance
+                    avalanche_first = max(debts, key=lambda x: x[2])  # by interest rate
+
+                    st.markdown(f"""
+                    #### 🔍 How It Works
+                    Each month:
+                    1. **Interest accrues** on all active debts.
+                    2. You pay the **minimum payment** on every debt.
+                    3. Any **extra payment** (₹{extra_payment:,.0f}) is applied **entirely** to your highest-priority debt.
+                    4. Once a debt is paid off, its minimum payment + leftover extra flows to the next.
+
+                    ---
+
+                    ##### ❄️ Snowball Method
+                    - **Priority**: Smallest balance first  
+                    - **First Target**: *{snowball_first[0]}* (₹{snowball_first[1]:,.0f} @ {snowball_first[2]}%)  
+                    - **Why?** Quick wins build motivation by reducing debt count fast.
+
+                    ##### 🔥 Avalanche Method
+                    - **Priority**: Highest interest rate first  
+                    - **First Target**: *{avalanche_first[0]}* (₹{avalanche_first[1]:,.0f} @ {avalanche_first[2]}%)  
+                    - **Why?** Reduces expensive interest faster → saves money long-term.
+
                     """)
 
             except Exception as e:
