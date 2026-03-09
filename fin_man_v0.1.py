@@ -27,6 +27,7 @@ st.set_page_config(page_title="Financial Management Studio | v0.1",
                     layout="wide",
                     page_icon="₹",            
                     initial_sidebar_state="auto")
+  
 #---------------------------------------------------------------------------------------------------------------------------------
 ### CSS
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -202,31 +203,31 @@ if 'page' not in st.session_state:
 
 def go_home():
     st.session_state.page = 'home'
-
+   
 # ------------------------------------------------------------------
 # HOME PAGE: 3 CALCULATOR CARDS (responsive grid)
 # ------------------------------------------------------------------
 if st.session_state.page == 'home':
 
     st.markdown("""
-    <style>
-    .banner {
-        background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
-        border-radius: 12px;
-        padding: 15px;
-        margin: 25px 0;
-        border: 1px solid rgba(0, 86, 179, 0.15);
-        text-align: center;
-        font-size: 1.15rem;
-        color: #0056b3;
-        font-weight: 600;
-    }
-    </style>
+        <style>
+        .banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 25px 0;
+            border: 1px solid rgba(0, 86, 179, 0.15);
+            text-align: center;
+            font-size: 1.15rem;
+            color: #0056b3;
+            font-weight: 600;
+        }
+        </style>
 
-    <div class="banner">
-        Click the cards below to access different sections and explore the following features
-    </div>
-    """, unsafe_allow_html=True)
+        <div class="banner">
+            Click the cards below to access different sections and explore the following features
+        </div>
+        """, unsafe_allow_html=True)
 
     # Use 3 columns (adjust for responsiveness)
     cols = st.columns(4)
@@ -247,7 +248,7 @@ if st.session_state.page == 'home':
             """,
             unsafe_allow_html=True
         )
-        if st.button("Open Calculator", key="btn_fd", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_fd", width="stretch", type="primary"):
             st.session_state.page = 'fd'
             st.rerun()
 
@@ -264,7 +265,7 @@ if st.session_state.page == 'home':
             """,
             unsafe_allow_html=True
         )
-        if st.button("Open Calculator", key="btn_loan", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_loan", width="stretch", type="primary"):
             st.session_state.page = 'loan'
             st.rerun()
             
@@ -281,7 +282,7 @@ if st.session_state.page == 'home':
             """,
             unsafe_allow_html=True
         )
-        if st.button("Open Calculator", key="btn_tax", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_tax", width="stretch", type="primary"):
             st.session_state.page = 'tax'
             st.rerun()
         
@@ -298,7 +299,7 @@ if st.session_state.page == 'home':
             """,
             unsafe_allow_html=True
         )
-        if st.button("Open Calculator", key="btn_cagr", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_cagr", width="stretch", type="primary"):
             st.session_state.page = 'cagr'
             st.rerun()
             
@@ -316,7 +317,7 @@ if st.session_state.page == 'home':
             """,
             unsafe_allow_html=True
         )
-        if st.button("Open Calculator", key="btn_rd", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_rd", width="stretch", type="primary"):
             st.session_state.page = 'rd'
             st.rerun()
 
@@ -332,7 +333,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_home_af", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_home_af", width="stretch", type="primary"):
                 st.session_state.page = 'home_af'
                 st.rerun()
 
@@ -348,7 +349,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_tax_saving", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_tax_saving", width="stretch", type="primary"):
                 st.session_state.page = 'tax_saving'
                 st.rerun()
                 
@@ -364,7 +365,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_inflation", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_inflation", width="stretch", type="primary"):
                 st.session_state.page = 'inflation'
                 st.rerun()
                         
@@ -382,7 +383,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_sip", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_sip", width="stretch", type="primary"):
                 st.session_state.page = 'sip'
                 st.rerun()
 
@@ -398,7 +399,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_car", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_car", width="stretch", type="primary"):
                 st.session_state.page = 'car'
                 st.rerun()
 
@@ -414,7 +415,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_goal", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_goal", width="stretch", type="primary"):
                 st.session_state.page = 'goal'
                 st.rerun()
                                                                         
@@ -432,7 +433,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_retirement", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_retirement", width="stretch", type="primary"):
                 st.session_state.page = 'retirement'
                 st.rerun()
 
@@ -448,7 +449,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_debt", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_debt", width="stretch", type="primary"):
                 st.session_state.page = 'debt'
                 st.rerun()
 
@@ -464,7 +465,7 @@ if st.session_state.page == 'home':
             </div>
             """,
             unsafe_allow_html=True)
-        if st.button("Open Calculator", key="btn_networth", use_container_width=True, type="primary"):
+        if st.button("Open Calculator", key="btn_networth", width="stretch", type="primary"):
                 st.session_state.page = 'networth'
                 st.rerun() 
                                                    
@@ -479,7 +480,7 @@ elif st.session_state.page == 'fd':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -619,7 +620,7 @@ elif st.session_state.page == 'fd':
                         return f'color: {color}; font-weight: bold'
 
                     styled_df = growth_df.style.map(color_diff, subset=["Diff (₹)", "Diff (%)"])
-                    st.dataframe(styled_df, use_container_width=True, hide_index=True)
+                    st.dataframe(styled_df, width="stretch", hide_index=True)
 
     # ----------------------------
     # DISPLAY COLUMN (Graph)
@@ -650,7 +651,7 @@ elif st.session_state.page == 'fd':
                     height=500,
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
                 fig.update_yaxes(tickprefix="₹")
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
             
 # ------------------------------------------------------------------
 # RECURRING DEPOSIT PAGE
@@ -663,7 +664,7 @@ elif st.session_state.page == 'rd':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -858,7 +859,7 @@ elif st.session_state.page == 'rd':
                         color = '#4ade80' if val >= 0 else '#f87171'
                         return f'color: {color}; font-weight: bold'
                     styled_rd = rd_df.style.map(color_diff, subset=["Diff (₹)", "Diff (%)"])
-                    st.dataframe(styled_rd, use_container_width=True, hide_index=True)
+                    st.dataframe(styled_rd, width="stretch", hide_index=True)
 
     with display_col:
         if submitted:
@@ -893,7 +894,7 @@ elif st.session_state.page == 'rd':
                 height=500)
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
                      
 # ------------------------------------------------------------------
 # LOAN EMI PAGE
@@ -906,7 +907,7 @@ elif st.session_state.page == 'loan':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1035,7 +1036,7 @@ elif st.session_state.page == 'loan':
                 
                     #st.markdown("### 📉 Amortization Schedule (Reducing Balance)")
                     amort_df = pd.DataFrame(schedule)
-                    st.dataframe(amort_df, use_container_width=True, hide_index=True, height=400)
+                    st.dataframe(amort_df, width="stretch", hide_index=True, height=400)
                             
     with display_col:
         if submitted:
@@ -1071,7 +1072,7 @@ elif st.session_state.page == 'loan':
             fig1.update_yaxes(tickprefix="₹")
             fig1.update_xaxes(rangeslider_visible=True)
             with st.container(border=True):
-                st.plotly_chart(fig1, use_container_width=True)
+                st.plotly_chart(fig1, width="stretch")
 
             # If comparing, show pie charts
             if compare_mode:
@@ -1099,7 +1100,7 @@ elif st.session_state.page == 'loan':
                     height=500
                 )
                 with st.container(border=True):
-                    st.plotly_chart(fig2, use_container_width=True)
+                    st.plotly_chart(fig2, width="stretch")
 
 # ------------------------------------------------------------------
 # SIP PAGE
@@ -1112,7 +1113,7 @@ elif st.session_state.page == 'sip':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1231,7 +1232,7 @@ elif st.session_state.page == 'sip':
             )
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
                 
 # ------------------------------------------------------------------
 # INCOME TAX PAGE
@@ -1244,7 +1245,7 @@ elif st.session_state.page == 'tax':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1359,7 +1360,7 @@ elif st.session_state.page == 'tax':
             )
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
                 
 # ------------------------------------------------------------------
 # CAGR PAGE
@@ -1372,7 +1373,7 @@ elif st.session_state.page == 'cagr':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1460,7 +1461,7 @@ elif st.session_state.page == 'cagr':
                 template="plotly_white",
                 height=500)
             fig.update_yaxes(tickprefix="₹")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
 # ------------------------------------------------------------------
 # RETIREMENT PAGE
@@ -1473,7 +1474,7 @@ elif st.session_state.page == 'retirement':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1580,7 +1581,7 @@ elif st.session_state.page == 'retirement':
             
             exp_df = pd.DataFrame(expense_data)
             with st.container(border=True):
-                st.dataframe(exp_df, use_container_width=True, hide_index=True)
+                st.dataframe(exp_df, width="stretch", hide_index=True)
 
                 # --- Insight ---
                 if monthly_savings > (monthly_expense * 0.3):
@@ -1604,7 +1605,7 @@ elif st.session_state.page == 'retirement':
                 height=400)
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
 
 # ------------------------------------------------------------------
 # EMERGENCY FUND PAGE
@@ -1613,7 +1614,7 @@ elif st.session_state.page == 'retirement':
 elif st.session_state.page == 'emergency':
     col_home, _ = st.columns([1, 9])
     with col_home:
-        if st.button("← Home", key="home_emergency", type="secondary", use_container_width=True):
+        if st.button("← Home", key="home_emergency", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1661,7 +1662,7 @@ elif st.session_state.page == 'emergency':
                 }
             ))
             fig.update_layout(height=300)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
 # ------------------------------------------------------------------
 # HOME AFFORDABILITY PAGE
@@ -1674,7 +1675,7 @@ elif st.session_state.page == 'home_af':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1776,7 +1777,7 @@ elif st.session_state.page == 'home_af':
             fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.4, marker_colors=['#4ade80', '#38bdf8'])])
             fig.update_layout(title="Home Purchase Breakdown", height=450)
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
 
             # Monthly cost breakdown
             emi_monthly = max_emi
@@ -1790,7 +1791,7 @@ elif st.session_state.page == 'home_af':
             fig2.update_yaxes(tickprefix="₹")
             
             with st.container(border=True):
-                st.plotly_chart(fig2, use_container_width=True)
+                st.plotly_chart(fig2, width="stretch")
             
 # ------------------------------------------------------------------
 # CAR LOAN & DEPRECIATION PAGE
@@ -1803,7 +1804,7 @@ elif st.session_state.page == 'car':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -1910,7 +1911,7 @@ elif st.session_state.page == 'car':
             )
             fig1.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig1, use_container_width=True)
+                st.plotly_chart(fig1, width="stretch")
 
             # Cost breakdown pie
             fig2 = go.Figure(data=[go.Pie(
@@ -1920,7 +1921,7 @@ elif st.session_state.page == 'car':
             )])
             fig2.update_layout(title="Cost Components", height=500)
             with st.container(border=True):
-                st.plotly_chart(fig2, use_container_width=True)
+                st.plotly_chart(fig2, width="stretch")
 
 # ------------------------------------------------------------------
 # INFLATION IMPACT PAGE
@@ -1933,7 +1934,7 @@ elif st.session_state.page == 'inflation':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -2035,7 +2036,7 @@ elif st.session_state.page == 'inflation':
                     "Year": years_list,
                     "Value (₹)": values_list
                 })
-                st.dataframe(infl_df, use_container_width=True, hide_index=True)
+                st.dataframe(infl_df, width="stretch", hide_index=True)
 
                 # --- Insight ---
                 if calc_type == "Future Value":
@@ -2067,7 +2068,7 @@ elif st.session_state.page == 'inflation':
             )
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
 
 # ------------------------------------------------------------------
 # PPF / Sukanya Samriddhi / NSC PAGE
@@ -2080,7 +2081,7 @@ elif st.session_state.page == 'tax_saving':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_fd", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_fd", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -2166,7 +2167,7 @@ elif st.session_state.page == 'tax_saving':
             )
             fig.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
                 
 # ------------------------------------------------------------------
 # Debt Payoff Planner
@@ -2179,7 +2180,7 @@ elif st.session_state.page == 'debt':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_debt", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_debt", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -2383,7 +2384,7 @@ elif st.session_state.page == 'debt':
                 height=350
             )
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
 
             #st.markdown("### ⏳ Payoff Timeline")
             timeline_data = {
@@ -2393,7 +2394,7 @@ elif st.session_state.page == 'debt':
             }
             
             with st.container(border=True):
-                st.dataframe(pd.DataFrame(timeline_data), use_container_width=True)
+                st.dataframe(pd.DataFrame(timeline_data), width="stretch")
 
 # ------------------------------------------------------------------
 # Goal-Based Savings Calculator
@@ -2406,7 +2407,7 @@ elif st.session_state.page == 'goal':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_goal", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_goal", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -2502,7 +2503,7 @@ elif st.session_state.page == 'goal':
                 })
             milestone_df = pd.DataFrame(milestones)
             with st.container(border=True):
-                st.dataframe(milestone_df, use_container_width=True, hide_index=True)
+                st.dataframe(milestone_df, width="stretch", hide_index=True)
 
                 # --- Insight ---
                 if monthly_sip > (target_amount / (years * 12)) * 1.5:
@@ -2546,7 +2547,7 @@ elif st.session_state.page == 'goal':
             fig.update_yaxes(tickprefix="₹")
             
             with st.container(border=True):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
             
 # ------------------------------------------------------------------
 # Net Worth Tracker & Projection
@@ -2559,7 +2560,7 @@ elif st.session_state.page == 'networth':
     # ← Home button (top-left)
     col_home, title= st.columns([1,15,])
     with col_home:
-        if st.button("Home", icon="🏠", key="home_networth", type="secondary", use_container_width=True):
+        if st.button("Home", icon="🏠", key="home_networth", type="secondary", width="stretch"):
             go_home()
             st.rerun()
 
@@ -2643,7 +2644,7 @@ elif st.session_state.page == 'networth':
             # --- Projection Table ---
             with st.container(border=True):
                 st.markdown("#### 📈 5-Year Projection")
-                st.dataframe(df_proj.set_index("Year"), use_container_width=True)
+                st.dataframe(df_proj.set_index("Year"), width="stretch")
 
                 # --- Insight ---
                 growth_rate = ((net_worth / (total_assets - total_liabilities)) - 1) if (total_assets - total_liabilities) != 0 else 0
@@ -2683,7 +2684,7 @@ elif st.session_state.page == 'networth':
             )
             fig1.update_yaxes(tickprefix="₹")
             with st.container(border=True):
-                st.plotly_chart(fig1, use_container_width=True)
+                st.plotly_chart(fig1, width="stretch")
 
             # Pie: Current net worth composition
             fig2 = go.Figure(data=[go.Pie(
@@ -2694,4 +2695,4 @@ elif st.session_state.page == 'networth':
             )])
             fig2.update_layout(title="Current Financial Position", height=500)
             with st.container(border=True):
-                st.plotly_chart(fig2, use_container_width=True)
+                st.plotly_chart(fig2, width="stretch")
